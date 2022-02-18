@@ -1,0 +1,34 @@
+********************************************************************************
+**	First line is reserved for scene camera, which is initialized as		  **
+**		[lookfrom], [lookat] vectors.										  **
+**	Objects are initalized in order in the format							  **
+**		[object type] [position vector] [direction vector] [radius]			  **
+**	Object initalization is preceded with a single value that indicates the	  **
+**		total object count. Declaration of objects past the declared count is **
+**		ignored.															  **
+**	After intializations, object modifiers can be applied with a format		  **
+**		[modifier type] [object id] [position / applied rotation vector]	  **
+**																			  **
+**	Object types are:														  **
+**			[s] sphere	(requires a radius parameter, direction is ignored)	  **
+**			[p] plane														  **
+**			[v] cone														  **
+**			[o] cylinder													  **
+**			[l] light	(does not increment the object count!)				  **
+**	Modifier types are:														  **
+**			[t] translation													  **
+**			[r] rotation													  **
+********************************************************************************
+0,0,1 0,0,0
+
+5
+
+s 0,0,0 0,0,0 0.2
+p 0,0,0 0,0,1
+v 0,0,0 0,1,0
+o 0,0,0 0,1,0
+l 1,0,0
+
+t 1 0,0,0.5
+r 4 0,0,90
+t 0 0.4,0.4,-0.1
