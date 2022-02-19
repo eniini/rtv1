@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:28:19 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 00:11:50 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/19 22:43:28 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ typedef struct s_rt {
 	t_color		colors[10];
 }				t_rt;
 
+void		init_colors(t_rt *rt);
 uint32_t	col_to_uint(t_color color);
 t_color		col_lerp(t_color c1, t_color c2, float p);
 t_color		col_blend(t_color base, t_color mix, float p);
@@ -101,11 +102,18 @@ void		rt_init_cam(t_cam *cam, t_vector lookfrom, t_vector lookat);
 
 float		hit_plane(t_obj plane, t_ray ray);
 float		hit_sphere(t_obj sphere, t_ray ray);
+float		hit_cylinder(t_obj cyl, t_ray ray);
+float		hit_cone(t_obj cone, t_ray ray);
 
 void		init_light(t_light *light, t_vector pos, t_color c);
 void		init_sphere(t_obj *obj, t_vector orig, float radius, t_color c);
 void		init_plane(t_obj *obj, t_vector orig, t_vector dir, t_color c);
+void		init_cylinder(t_obj *obj, t_vector orig, t_vector dir, t_color c);
+void		init_cone(t_obj *obj, t_vector orig, t_vector dir, t_color c);
 
+void		init_objcount(t_rt *rt, char *line);
+void		init_cam(t_rt *rt, char *line);
+t_vector	read_3dvec(char *line);
 void		read_file(t_rt *rt, char *argv);
 
 void		apply_3d_mods(t_obj *obj, t_vector r, t_vector t);

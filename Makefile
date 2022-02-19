@@ -18,6 +18,7 @@ SRC_LIST = color.c \
 		mv_float_ops.c \
 		mv_vectoral.c \
 		raytracer.c \
+		rt_parser_utils.c \
 		rt_sceneparser.c \
 		rt_hit.c \
 		rt_shapes.c

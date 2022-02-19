@@ -10,25 +10,24 @@
 **		[modifier type] [object id] [position / applied rotation vector]	  **
 **																			  **
 **	Object types are:														  **
-**			[s] sphere	(requires a radius parameter, direction is ignored)	  **
-**			[p] plane														  **
-**			[v] cone														  **
-**			[o] cylinder													  **
-**			[l] light	(does not increment the object count!)				  **
+**		[s] sphere		(requires a radius parameter, direction is ignored)	  **
+**		[p] plane		(requires direction, radius is ignored)				  **
+**		[v] cone		(requires both direction and radius)				  **
+**		[o] cylinder	(requires both direction and radius)				  **
+**		[l] light		(does not increment the object count!)				  **
 **	Modifier types are:														  **
-**			[t] translation													  **
-**			[r] rotation													  **
+**		[t] translation														  **
+**		[r] rotation														  **
 ********************************************************************************
-0,0,1 0,0,0
+0,0,-1 0,0,0
 
 5
 
 s 0,0,0 0,0,0 0.2
-p 0,0,0 0,0,1
-v 0,0,0 0,1,0
-o 0,0,0 0,1,0
-l 1,0,0
+p 0,0,1 0,2,1 0
+v 0,0,0 0,0,0 0.1
+o -0.5,0,1 0,1,0 0.1
+l 0.5,0,-0.5 0
 
-t 1 0,0,0.5
 r 4 0,0,90
 t 0 0.4,0.4,-0.1

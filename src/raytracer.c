@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/14 14:38:49 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 00:20:51 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/19 20:27:28 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,9 @@ static t_bool	trace_ray(t_rt *rt, t_ray ray, float u, float v)
 				ray.hit_dist = t;
 				ray.hit_point = mv_normalize(mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist)));
 				ray.hp_normal = mv_mul_f(rt->object[i].dir, -1.0f);
-				pixelcolor = rt->object[i].col;
+				float dotproduct = mv_dot_product(rt->light.pos, ray.hp_normal);
+				if (dotproduct > 0)
+					pixelcolor = col_multiply(rt->object[i].col, dotproduct);
 			}
 		}
 		if (rt->object[i].shape == SPHERE)
@@ -85,6 +87,34 @@ static t_bool	trace_ray(t_rt *rt, t_ray ray, float u, float v)
 				float dotproduct = mv_dot_product(ray.hp_normal, mv_normalize(rt->light.pos));
 				if (dotproduct > 0)
 					pixelcolor = col_multiply(rt->object[i].col, dotproduct);
+			}
+		}
+		if (rt->object[i].shape == CYLINDER)
+		{
+			t = hit_cylinder(rt->object[i], ray);
+			if (t > 0.001f && t < ray.hit_dist)
+			{
+				ray.hit_dist = t;
+				ray.hit_point = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
+				ray.hp_normal = mv_normalize(mv_sub_v(ray.hit_point, rt->object[i].pos));
+				float dotproduct = mv_dot_product(ray.hp_normal, mv_normalize(rt->light.pos));
+				if (dotproduct > 0)
+					pixelcolor = col_lerp(rt->object[i].col, rt->object[i].col, dotproduct);
+				pixelcolor = rt->object[i].col;
+			}
+		}
+		if (rt->object[i].shape == CONE)
+		{
+			t = hit_cone(rt->object[i], ray);
+			if (t > 0.001f && t < ray.hit_dist)
+			{
+				ray.hit_dist = t;
+				ray.hit_point = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
+				ray.hp_normal = mv_normalize(mv_sub_v(ray.hit_point, rt->object[i].pos));
+				float dotproduct = mv_dot_product(ray.hp_normal, mv_normalize(rt->light.pos));
+				if (dotproduct > 0)
+					pixelcolor = col_lerp(rt->object[i].col, rt->object[i].col, dotproduct);
+				pixelcolor = rt->object[i].col;
 			}
 		}
 		draw_pixel((uint32_t)(u * WIN_W), (uint32_t)(v * WIN_H), \

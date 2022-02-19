@@ -6,11 +6,37 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:21:54 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 00:06:48 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/19 13:30:14 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
+
+/*
+*	[0] = White
+*	[1] = Light gray
+*	[2] = Medium gray
+*	[3] = Dark gray
+*	[4] = Black
+*	[5] = Violet
+*	[6] = Purple
+*	[7] = Pink
+*	[8] = Ice
+*	[9] = Blue
+*/
+void	init_colors(t_rt *rt)
+{
+	rt->colors[0] = (t_color){1.0, 1.0, 1.0};
+	rt->colors[1] = (t_color){0.75, 0.75, 0.75};
+	rt->colors[2] = (t_color){0.5, 0.5, 0.5};
+	rt->colors[3] = (t_color){0.25, 0.25, 0.25};
+	rt->colors[4] = (t_color){0.0, 0.0, 0.0};
+	rt->colors[5] = (t_color){0.48, 0.61, 0.76};
+	rt->colors[6] = (t_color){0.49, 0.48, 0.76};
+	rt->colors[7] = (t_color){0.62, 0.48, 0.76};
+	rt->colors[8] = (t_color){0.48, 0.72, 0.76};
+	rt->colors[9] = (t_color){0.48, 0.58, 0.76};
+}
 
 //convert t_color to ARGB uint for SDL pixel painting
 uint32_t	col_to_uint(t_color color)
