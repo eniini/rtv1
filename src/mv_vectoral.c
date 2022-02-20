@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:23:06 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/03 15:14:57 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/20 16:42:32 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 *	[0] means that the angle is exactly 90° and
 *	[> 0] means that the angle is less than 90°.
 */
-float	mv_dot_product(t_vector va, t_vector vb)
+float	mv_dot(t_vector va, t_vector vb)
 {
 	return (va.x * vb.x + va.y * vb.y + va.z * vb.z);
 }
@@ -29,7 +29,7 @@ float	mv_dot_product(t_vector va, t_vector vb)
 *	Returns a magnitude of an perpendicular vector to the plane (v1, v2).
 *	Can be used to calculate normals, etc.
 */
-t_vector	mv_cross_product(t_vector va, t_vector vb)
+t_vector	mv_cross(t_vector va, t_vector vb)
 {
 	t_vector	result;
 

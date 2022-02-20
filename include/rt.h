@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:28:19 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 22:43:28 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/21 01:05:35 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,6 @@ typedef struct s_light {
 }				t_light;
 
 typedef struct s_cam {
-	float		view_h;
-	float		view_w;
-	float		focal_l;
 	t_vector	orig;
 	t_vector	h;
 	t_vector	v;
@@ -60,8 +57,7 @@ typedef struct s_cam {
 typedef struct s_ray {
 	t_vector	orig;
 	t_vector	dir;
-	t_vector	hit_point;
-	t_vector	hp_normal;
+	t_vector	normal;
 	float		hit_dist;
 }				t_ray;
 
@@ -97,13 +93,14 @@ t_color		col_multiply(t_color color, float m);
 
 void		draw_pixel(uint32_t x, uint32_t y, t_buffer *buf, uint32_t color);
 
-void		rt_render(t_rt *rt);
-void		rt_init_cam(t_cam *cam, t_vector lookfrom, t_vector lookat);
+void		render(t_rt *rt);
+void		init_cam(t_cam *cam, t_vector lookfrom, t_vector lookat);
+t_ray		init_ray(t_cam cam, float u, float v);
 
-float		hit_plane(t_obj plane, t_ray ray);
-float		hit_sphere(t_obj sphere, t_ray ray);
-float		hit_cylinder(t_obj cyl, t_ray ray);
-float		hit_cone(t_obj cone, t_ray ray);
+float		hit_plane(t_obj plane, t_ray ray, float *hit_distance);
+float		hit_sphere(t_obj sphere, t_ray ray, float *hit_distance);
+float		hit_cylinder(t_obj cyl, t_ray ray, float *hit_distance);
+float		hit_cone(t_obj cone, t_ray ray, float *hit_distance);
 
 void		init_light(t_light *light, t_vector pos, t_color c);
 void		init_sphere(t_obj *obj, t_vector orig, float radius, t_color c);
@@ -111,8 +108,8 @@ void		init_plane(t_obj *obj, t_vector orig, t_vector dir, t_color c);
 void		init_cylinder(t_obj *obj, t_vector orig, t_vector dir, t_color c);
 void		init_cone(t_obj *obj, t_vector orig, t_vector dir, t_color c);
 
-void		init_objcount(t_rt *rt, char *line);
-void		init_cam(t_rt *rt, char *line);
+void		read_objcount(t_rt *rt, char *line);
+void		read_cam(t_rt *rt, char *line);
 t_vector	read_3dvec(char *line);
 void		read_file(t_rt *rt, char *argv);
 

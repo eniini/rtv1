@@ -6,28 +6,13 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/14 14:38:49 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 20:27:28 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/21 01:28:13 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
 
-static t_ray	init_ray(t_cam cam, float u, float v)
-{
-	t_ray	r;
-
-	r.orig = cam.orig;
-	r.dir = cam.llc;
-	r.dir = mv_add_v(r.dir, mv_mul_f(cam.h, u));
-	r.dir = mv_add_v(r.dir, mv_mul_f(cam.v, v));
-	r.dir = mv_sub_v(r.dir, cam.orig);
-	r.dir = mv_normalize(r.dir);
-	r.hit_point = (t_vector){0, 0, 0, 1};
-	r.hp_normal = (t_vector){0, 0, 0, 1};
-	return (r);
-}
-
-static t_bool	is_in_shadow(t_rt *rt, t_ray ray, uint obj_i)
+/*static t_bool	is_in_shadow(t_rt *rt, t_ray ray, uint obj_i)
 {
 	uint	i;
 	t_ray	shadowray;
@@ -49,110 +34,86 @@ static t_bool	is_in_shadow(t_rt *rt, t_ray ray, uint obj_i)
 		i++;
 	}
 	return (FALSE);
+}*/
+
+static t_vector	find_intersection_normal(t_obj obj, t_ray ray)
+{
+	t_vector	hp;
+	t_vector	tmp;
+
+	hp = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
+	if (obj.shape == PLANE)
+		return (mv_normalize(mv_mul_f(obj.dir, -1.0f)));
+	if (obj.shape == SPHERE)
+		return (mv_normalize(mv_sub_v(hp, obj.pos)));
+	if (obj.shape == CYLINDER)
+	{
+		tmp = mv_sub_v(hp, obj.pos);
+		tmp = mv_add_v(obj.pos, mv_mul_f(obj.dir, \
+				mv_dot(tmp, mv_normalize(obj.dir))));
+		return (mv_normalize(mv_sub_v(hp, tmp)));
+	}
+	else
+	{
+		ray.normal = mv_sub_v(hp, obj.pos);
+		tmp = mv_mul_f(ray.normal, mv_dot(obj.dir, ray.normal));
+		ray.normal = mv_div_f(tmp, mv_dot(ray.normal, ray.normal));
+		return (mv_normalize(mv_sub_v(obj.dir, ray.normal)));
+	}
 }
 
-static t_bool	trace_ray(t_rt *rt, t_ray ray, float u, float v)
+/*
+*	NOTE: CALL SHADOWCASTER FROM HERE!
+*/
+static t_color	find_color(t_rt *rt, t_ray ray, int i)
+{
+	float	dotproduct;
+
+	ray.normal = find_intersection_normal(rt->object[i], ray);
+	dotproduct = mv_dot(ray.normal, mv_normalize(rt->light.pos));
+	if (dotproduct > 0)
+		return (col_multiply(rt->object[i].col, dotproduct));
+	else
+		return (rt->colors[1]);
+}
+
+/*
+*	Note: returns the hit_distance values simply because there was no room
+*	to include a boolean return check!
+*/
+static float	trace_ray(t_rt *rt, t_ray ray, float u, float v)
 {
 	float		t;
 	uint		i;
 	t_color		pixelcolor;
 
-	//ft_printf("light pos: %f|%f|%f\n", rt->light.pos.x, rt->light.pos.y, rt->light.pos.z);
 	ray.hit_dist = FLT_MAX;
 	i = 0;
 	pixelcolor = (t_color){0, 0, 0};
 	while (i < rt->objcount)
 	{
 		if (rt->object[i].shape == PLANE)
-		{
-			t = hit_plane(rt->object[i], ray);
-			if (t > 0.001f && t < ray.hit_dist)
-			{
-				ray.hit_dist = t;
-				ray.hit_point = mv_normalize(mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist)));
-				ray.hp_normal = mv_mul_f(rt->object[i].dir, -1.0f);
-				float dotproduct = mv_dot_product(rt->light.pos, ray.hp_normal);
-				if (dotproduct > 0)
-					pixelcolor = col_multiply(rt->object[i].col, dotproduct);
-			}
-		}
+			t = hit_plane(rt->object[i], ray, &ray.hit_dist);
 		if (rt->object[i].shape == SPHERE)
-		{
-			t = hit_sphere(rt->object[i], ray);
-			if (t > 0.001f && t < ray.hit_dist)
-			{
-				ray.hit_dist = t;
-				ray.hit_point = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
-				ray.hp_normal = mv_normalize(mv_sub_v(ray.hit_point, rt->object[i].pos)); //plane doesnt handle like this!
-				float dotproduct = mv_dot_product(ray.hp_normal, mv_normalize(rt->light.pos));
-				if (dotproduct > 0)
-					pixelcolor = col_multiply(rt->object[i].col, dotproduct);
-			}
-		}
+			t = hit_sphere(rt->object[i], ray, &ray.hit_dist);
 		if (rt->object[i].shape == CYLINDER)
-		{
-			t = hit_cylinder(rt->object[i], ray);
-			if (t > 0.001f && t < ray.hit_dist)
-			{
-				ray.hit_dist = t;
-				ray.hit_point = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
-				ray.hp_normal = mv_normalize(mv_sub_v(ray.hit_point, rt->object[i].pos));
-				float dotproduct = mv_dot_product(ray.hp_normal, mv_normalize(rt->light.pos));
-				if (dotproduct > 0)
-					pixelcolor = col_lerp(rt->object[i].col, rt->object[i].col, dotproduct);
-				pixelcolor = rt->object[i].col;
-			}
-		}
+			t = hit_cylinder(rt->object[i], ray, &ray.hit_dist);
 		if (rt->object[i].shape == CONE)
-		{
-			t = hit_cone(rt->object[i], ray);
-			if (t > 0.001f && t < ray.hit_dist)
-			{
-				ray.hit_dist = t;
-				ray.hit_point = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
-				ray.hp_normal = mv_normalize(mv_sub_v(ray.hit_point, rt->object[i].pos));
-				float dotproduct = mv_dot_product(ray.hp_normal, mv_normalize(rt->light.pos));
-				if (dotproduct > 0)
-					pixelcolor = col_lerp(rt->object[i].col, rt->object[i].col, dotproduct);
-				pixelcolor = rt->object[i].col;
-			}
-		}
+			t = hit_cone(rt->object[i], ray, &ray.hit_dist);
+		if (t > 0)
+			pixelcolor = find_color(rt, ray, i);
 		draw_pixel((uint32_t)(u * WIN_W), (uint32_t)(v * WIN_H), \
 			rt->rend.rt_buffer, col_to_uint(pixelcolor));
 		i++;
 	}
-	if (ray.hit_dist != FLT_MAX)
-		return (TRUE);
-	return (FALSE);
-}
-
-void	rt_init_cam(t_cam *cam, t_vector lookfrom, t_vector lookat)
-{
-	float	theta;
-	float	h;
-	float	vfov;
-	float	ar;
-
-	vfov = 75;
-	ar = 16.0f / 9.0f;
-	theta = vfov * DEG_TO_RAD;
-	h = tanf(theta / 2.0f);
-	cam->view_h = 2 * h;
-	cam->view_w = ar * cam->view_h;
-	cam->orig = lookfrom;
-	cam->h = (t_vector){cam->view_w, 0, 0, 1};
-	cam->v = (t_vector){0, cam->view_h, 0, 1};
-	cam->llc = mv_sub_v(mv_sub_v(mv_sub_v(cam->orig, \
-				mv_div_f(cam->v, 2.0f)), mv_div_f(cam->h, 2.0f)), \
-				mv_normalize(mv_sub_v(lookfrom, lookat)));
-	mv_normalize(cam->llc);
+	return (ray.hit_dist);
 }
 
 /*
 *	Map screen coordinates into UV coordinates (0.0,1.0)
 *	going top-to-bottom, left-to-right.
 */
-void	rt_render(t_rt *rt)
+void	render(t_rt *rt)
 {
 	int		i;
 	int		j;
@@ -167,7 +128,7 @@ void	rt_render(t_rt *rt)
 		{
 			u = (float)i / (WIN_W - 1);
 			v = (float)j / (WIN_H - 1);
-			if (!(trace_ray(rt, init_ray(rt->cam, u, v), u, v)))
+			if (trace_ray(rt, init_ray(rt->cam, u, v), u, v) == FLT_MAX)
 				draw_pixel((uint32_t)(u * WIN_W), (uint32_t)(v * WIN_H), \
 				rt->rend.rt_buffer, C_BLACK);
 			i++;

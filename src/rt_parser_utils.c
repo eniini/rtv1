@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/19 22:40:02 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 22:42:24 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/21 01:01:52 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ t_vector	read_3dvec(char *line)
 *	be initalized. Multiple initalizations should not break the program, only
 *	rewrite previous coordinates.
 */
-void	init_cam(t_rt *rt, char *line)
+void	read_cam(t_rt *rt, char *line)
 {
 	char		*ptr;
 	t_vector	lookfrom;
@@ -61,12 +61,12 @@ void	init_cam(t_rt *rt, char *line)
 	if (!ptr)
 		ft_getout("Invalid camera init! (Incorrect delimiter character)");
 	lookat = read_3dvec((ptr + 1));
-	rt_init_cam(&rt->cam, lookfrom, lookat);
+	init_cam(&rt->cam, lookfrom, lookat);
 	rt->light.pos = rt->cam.orig;
 	rt->light.col = rt->colors[0];
 }
 
-void	init_objcount(t_rt *rt, char *line)
+void	read_objcount(t_rt *rt, char *line)
 {
 	rt->objcount = ft_atoi(line);
 	ft_printf("objectcount: %u\n", rt->objcount);

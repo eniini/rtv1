@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:28:13 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/15 21:58:43 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/21 00:52:09 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,25 +15,20 @@
 
 # include <stdint.h>
 
-//WINDOW
 # define WIN_W	1920
 # define WIN_H	1080
-
 # define SPHERE		1
 # define CYLINDER	2
 # define CONE		3
 # define PLANE		4
-
-# define WIN_NAME	"RTv1 build version 0.4"
-//COLOR PALETTE
-
-# define C_BLUE		0xff0000ff
-# define C_GREEN	0xff00ff00
-# define C_RED		0xffff0000
+# define WIN_NAME	"RTv1 build version 0.666"
 # define C_BLACK	0xff000000
 # define C_WHITE	0xffffffff
-# define C_GRAY		0xff808080
 # define C_DEBUG	0xff26ff26
+
+# ifndef FLT_MAX
+#  define FLT_MAX 	3.402823466e+38F
+# endif
 
 typedef struct s_vector {
 	float	x;

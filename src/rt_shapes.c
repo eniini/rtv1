@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 17:49:44 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 20:26:28 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/20 20:25:45 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	init_cone(t_obj *obj, t_vector orig, t_vector dir, t_color c)
 
 	obj->shape = CONE;
 	obj->pos = orig;
-	obj->r = orig.w;
+	obj->r = dir.w;
 	v = (t_vector){dir.x, dir.y, dir.z, 1};
 	obj->dir = v;
 	obj->col = c;

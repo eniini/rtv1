@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:22:33 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 13:30:11 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/21 01:01:10 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ int	main(int argc, char **argv)
 		ft_getout("failed to initialize pixel buffers");
 	init(&rt);
 	read_file(&rt, argv[1]);
-	rt_render(&rt);
+	render(&rt);
 	while (rt.rend.run)
 		loop(&rt);
 	cleanup(&rt);

@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:28:24 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/15 21:56:53 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/21 00:51:03 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ float		mv_distance_to_vector(t_vector va, t_vector vb);
 
 t_vector	mv_normalize(t_vector v);
 
-float		mv_dot_product(t_vector va, t_vector vb);
+float		mv_dot(t_vector va, t_vector vb);
 
-t_vector	mv_cross_product(t_vector va, t_vector vb);
+t_vector	mv_cross(t_vector va, t_vector vb);
 
 //4x4 matrix funcs
 

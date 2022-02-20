@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 17:04:50 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 20:03:45 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/21 00:34:38 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,52 +36,62 @@ static float	solve_quadratic(float a, float b, float c)
 		return (-1.0f);
 }
 
-float	hit_cylinder(t_obj cyl, t_ray ray)
+/*
+*	Solves equation for an infinitely long cylinder. Therefore we don't need to
+*	calculate intersection points with the shapes' caps.
+*/
+float	hit_cylinder(t_obj cyl, t_ray ray, float *hit_distance)
 {
 	t_vector	dist;
 	float		a;
 	float		b;
 	float		c;
+	float		d;
 
 	dist = mv_sub_v(ray.orig, cyl.pos);
-	a = mv_dot_product(ray.dir, ray.dir) - \
-	mv_dot_product(ray.dir, cyl.dir) * mv_dot_product(ray.dir, cyl.dir);
-	b = (mv_dot_product(dist, ray.dir) - mv_dot_product(ray.dir, cyl.dir) \
-		* mv_dot_product(dist, cyl.dir)) * 2.0f;
-	c = mv_dot_product(dist, dist) - mv_dot_product(dist, cyl.dir) * \
-	mv_dot_product(dist, cyl.dir) - cyl.r * cyl.r;
-	return (solve_quadratic(a, b, c));
+	a = mv_dot(ray.dir, ray.dir) - powf(mv_dot(ray.dir, cyl.dir), 2);
+	b = (mv_dot(dist, ray.dir) - mv_dot(ray.dir, cyl.dir) \
+		* mv_dot(dist, cyl.dir)) * 2.0f;
+	c = mv_dot(dist, dist) - mv_dot(dist, cyl.dir) * \
+	mv_dot(dist, cyl.dir) - cyl.r * cyl.r;
+	d = solve_quadratic(a, b, c);
+	if (d > 0.001f && d < *hit_distance)
+	{
+		*hit_distance = d;
+		return (d);
+	}
+	return (-1.0f);
 }
 
-float	hit_cone(t_obj cone, t_ray ray)
+/*
+*	Returns a distance to the point of intersection between a ray and
+*	an infinite sized cone. [r] exists as a multiplier that denotes the angle
+*	cones' extension. 
+*/
+float	hit_cone(t_obj cone, t_ray ray, float *hit_distance)
 {
-	t_vector	abd;
 	t_vector	abc;
+	t_vector	dis;
+	float		r;
+	float		d;
 
-	/*
-	t_vector	d;
-	t_vector	abc;
-	float		radius;
-	float		quad;
-	t_vector	hitpoint;
-
-	radius = (1 + cone.r * cone.r);
-	d = mv_sub_v(ray.orig, cone.pos);
-	abc.x = mv_dot_product(ray.dir, ray.dir) - radius * \
-	mv_dot_product(ray.dir, cone.dir) * mv_dot_product(ray.dir, cone.dir);
-	abc.y = (mv_dot_product(d, ray.dir) - radius * \
-	mv_dot_product(ray.dir, cone.dir) * mv_dot_product(d, cone.dir) * 2.0f);
-	abc.z = mv_dot_product(d, d) - radius * \
-	mv_dot_product(d, cone.dir) * mv_dot_product(d, cone.dir) - cone.r * cone.r;
-	quad = solve_quadratic(abc.x, abc.y, abc.z);
-	if (quad > 0.001f)
+	cone.r = cone.r * DEG_TO_RAD;
+	r = (1.0f + cone.r * cone.r);
+	dis = mv_sub_v(ray.orig, cone.pos);
+	abc.x = mv_dot(ray.dir, ray.dir) - r * powf(mv_dot(ray.dir, cone.dir), 2);
+	abc.y = 2 * (mv_dot(dis, ray.dir) - r
+			* mv_dot(ray.dir, cone.dir) * mv_dot(dis, cone.dir));
+	abc.z = mv_dot(dis, dis) - r * powf(mv_dot(dis, cone.dir), 2);
+	d = solve_quadratic(abc.x, abc.y, abc.z);
+	if (d > 0.001f && d < *hit_distance)
 	{
-		hitpoint = mv_add_v(ray.orig, mv_mul_f(ray.dir, quad));
-		if (mv_dot_product(mv_sub_v(hitpoint, cone.pos), cone.dir) > 0)
+		abc = mv_add_v(ray.orig, mv_mul_f(ray.dir, d));
+		if ((mv_dot(mv_sub_v(abc, cone.pos), cone.dir) > 0))
 			return (-1.0f);
-		return (quad);
+		*hit_distance = d;
+		return (d);
 	}
-	return (-1.0f);*/
+	return (-1.0f);
 }
 
 /*
@@ -90,22 +100,24 @@ float	hit_cone(t_obj cone, t_ray ray)
 *
 *	Ray hits a plane if the vector from point hit to plane's origin
 *	is perpendicular (dotproduct of 0) to the plane's normal (direction) vector.
-*	[t] is the distance from the ray's origin to the point hit.
+*	[d] is the distance from the ray's origin to the point hit.
 *	Check for very small denominator values avoids cases where there could
 *	be infinite or zero hits.
 */
-float	hit_plane(t_obj plane, t_ray ray)
+float	hit_plane(t_obj plane, t_ray ray, float *hit_distance)
 {
 	float		denom;
-	float		t;
-	t_vector	diff;
+	float		d;
 
-	denom = mv_dot_product(ray.dir, plane.dir);
+	denom = mv_dot(ray.dir, plane.dir);
 	if (fabs(denom) > 0.0001f)
 	{
-		t = mv_dot_product(mv_sub_v(plane.pos, ray.orig), plane.dir) / denom;
-		if (t > 0.0001f)
-			return (t);
+		d = mv_dot(mv_sub_v(plane.pos, ray.orig), plane.dir) / denom;
+		if (d > 0.001f && d < *hit_distance)
+		{
+			*hit_distance = d;
+			return (d);
+		}
 	}
 	return (-1.0f);
 }
@@ -115,16 +127,23 @@ float	hit_plane(t_obj plane, t_ray ray)
 *	[sphere] that is closest to ray's point of origin. If not intersection is
 *	found, returns (-1.0f).
 */
-float	hit_sphere(t_obj sphere, t_ray ray)
+float	hit_sphere(t_obj sphere, t_ray ray, float *hit_distance)
 {
 	t_vector	oc;
 	float		a;
 	float		b;
 	float		c;
+	float		d;
 
 	oc = mv_sub_v(ray.orig, sphere.pos);
-	a = mv_dot_product(ray.dir, ray.dir);
-	b = 2.0f * mv_dot_product(oc, ray.dir);
-	c = mv_dot_product(oc, oc) - (sphere.r * sphere.r);
-	return (solve_quadratic(a, b, c));
+	a = mv_dot(ray.dir, ray.dir);
+	b = 2.0f * mv_dot(oc, ray.dir);
+	c = mv_dot(oc, oc) - (sphere.r * sphere.r);
+	d = solve_quadratic(a, b, c);
+	if (d > 0.001f && d < *hit_distance)
+	{
+		*hit_distance = d;
+		return (d);
+	}
+	return (-1.0f);
 }
