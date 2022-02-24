@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 17:49:44 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/20 20:25:45 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/24 23:36:20 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	init_plane(t_obj *obj, t_vector orig, t_vector dir, t_color c)
 {
 	obj->shape = PLANE;
 	obj->pos = orig;
-	obj->dir = mv_normalize(dir);
+	obj->dir = dir;
 	obj->r = 0.0f;
 	obj->col = c;
 }
