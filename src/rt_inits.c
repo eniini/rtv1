@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/21 00:53:02 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/24 23:33:23 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/25 00:20:52 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ t_ray	init_ray(t_cam cam, float u, float v)
 	r.dir = mv_add_v(r.dir, mv_mul_f(cam.h, u));
 	r.dir = mv_add_v(r.dir, mv_mul_f(cam.v, v));
 	r.dir = mv_sub_v(r.dir, cam.orig);
-	//r.dir = mv_normalize(r.dir); //<--------- !!!
+	r.dir = mv_normalize(r.dir);
 	r.normal = (t_vector){0, 0, 0, 0};
 	return (r);
 }
@@ -74,5 +74,4 @@ void	init_cam(t_cam *cam, t_vector lookfrom, t_vector lookat)
 	cam->llc = mv_sub_v(mv_sub_v(mv_sub_v(cam->orig, \
 				mv_div_f(cam->v, 2.0f)), mv_div_f(cam->h, 2.0f)), \
 				mv_normalize(mv_sub_v(lookfrom, lookat)));
-	//mv_normalize(cam->llc);
 }

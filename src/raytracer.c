@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/14 14:38:49 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/24 23:47:23 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/25 00:30:10 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,29 @@
 
 static t_bool	check_shadow(t_rt *rt, t_ray ray, uint obj_i)
 {
-	uint		i;
-	t_ray		shadowray;
-	t_vector	hp;
-	float		dist;
+	uint	i;
+	t_ray	shadowray;
+	float	dist;
+	float	retval;
 
 	i = 0;
-	hp = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
-	shadowray.orig = hp;
+	shadowray.orig = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
 	shadowray.dir = mv_normalize(mv_sub_v(shadowray.orig, rt->light.pos));
 	dist = mv_distance_to_vector(shadowray.orig, rt->light.pos);
 	while (i < rt->objcount)
 	{
 		if (rt->object[i].shape == SPHERE && i != obj_i)
-		{
-			if (hit_sphere(rt->object[i], shadowray, &dist) > 0.001f)
-				return (TRUE);
-		}
-		else if (rt->object[i].shape == PLANE && i != obj_i)
-		{
-			if (hit_plane(rt->object[i], shadowray, &dist) > 0.001f)
-				return (TRUE);
-		}
-		else if (rt->object[i].shape == CYLINDER && i != obj_i)
-		{
-			if (hit_cylinder(rt->object[i], shadowray, &dist) > 0.001f)
-				return (TRUE);
-		}
-		else if (rt->object[i].shape == CONE && i != obj_i)
-		{
-			if (hit_cone(rt->object[i], shadowray, &dist) > 0.001f)
-				return (TRUE);
-		}
+			retval = hit_sphere(rt->object[i], shadowray, &dist);
+		if (rt->object[i].shape == PLANE && i != obj_i)
+			retval = hit_plane(rt->object[i], shadowray, &dist);
+		if (rt->object[i].shape == CYLINDER && i != obj_i)
+			retval = hit_cylinder(rt->object[i], shadowray, &dist);
+		if (rt->object[i].shape == CONE && i != obj_i)
+			retval = hit_cone(rt->object[i], shadowray, &dist);
 		i++;
 	}
+	if (retval > 0.001f)
+		return (TRUE);
 	return (FALSE);
 }
 
@@ -58,7 +47,7 @@ static t_vector	find_intersection_normal(t_obj obj, t_ray ray)
 
 	hp = mv_add_v(ray.orig, mv_mul_f(ray.dir, ray.hit_dist));
 	if (obj.shape == PLANE)
-		return (mv_normalize(obj.dir)); //return (mv_normalize(mv_mul_f(obj.dir, -1.0f)));
+		return (mv_normalize(obj.dir));
 	if (obj.shape == SPHERE)
 		return (mv_normalize(mv_sub_v(obj.pos, hp)));
 	if (obj.shape == CYLINDER)
@@ -90,13 +79,8 @@ static t_color	find_color(t_rt *rt, t_ray ray, int i)
 	if (mv_dot(ray.dir, ray.normal) > 0)
 		ray.normal = mv_mul_f(ray.normal, -1.0f);
 	//if (check_shadow(rt, ray, i))
-	//	return ((t_color){0.22, 0.95, 0.35});//return (rt->colors[1]);
+	//	return (rt->colors[1]);
 	dotproduct = mv_dot(ray.normal, mv_normalize(rt->light.pos));
-	//if (ray.hit_dist < 1.0f)
-	//	return ((t_color){0.6,0.95,0.26});
-	//else
-		//return((t_color){0.95,0.41,0.26});
-	//return (col_lerp((t_color){0.6,0.95,0.26}, rt->colors[1], ray.hit_dist / 2.f));
 	if (dotproduct > 0)
 		return (col_multiply(rt->object[i].col, (dotproduct * 1.5f)));
 	else
@@ -126,8 +110,6 @@ static float	trace_ray(t_rt *rt, t_ray ray, float u, float v)
 			t = hit_cylinder(rt->object[i], ray, &ray.hit_dist);
 		if (rt->object[i].shape == CONE)
 			t = hit_cone(rt->object[i], ray, &ray.hit_dist);
-		//if (t > 1.0f)
-		//	ft_printf("%1.2f\n", t);
 		if (t > 0)
 			pixelcolor = find_color(rt, ray, i);
 		draw_pixel((uint32_t)(u * WIN_W), (uint32_t)(v * WIN_H), \

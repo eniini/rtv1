@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/19 22:40:02 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/24 23:29:52 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/25 00:21:12 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ void	read_cam(t_rt *rt, char *line)
 	t_vector	lookat;
 
 	ptr = line;
-	lookfrom = mv_normalize(read_3dvec(ptr));
+	lookfrom = read_3dvec(ptr);
 	ptr = ft_strchr(line, ' ');
 	if (!ptr)
 		ft_getout("Invalid camera init! (Incorrect delimiter character)");
-	lookat = mv_normalize(read_3dvec((ptr + 1)));
+	lookat = read_3dvec((ptr + 1));
 	init_cam(&rt->cam, lookfrom, lookat);
 	rt->light.pos = rt->cam.orig;
 	rt->light.col = rt->colors[0];
