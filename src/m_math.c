@@ -61,5 +61,5 @@ void	apply_3d_mods(t_obj *obj, t_vector r, t_vector t)
 	if (t.x || t.y || t.z)
 		result = mm_multiply_matrix(result, mm_init_translation(t.x, t.y, t.z));
 	obj->pos = mm_multiply_vector(obj->pos, result);
-	obj->dir = mm_multiply_vector(obj->pos, result);
+	obj->dir = mm_multiply_vector(obj->dir, result);
 }
