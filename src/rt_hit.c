@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 17:04:50 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/21 00:34:38 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/25 13:55:02 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ float	hit_cylinder(t_obj cyl, t_ray ray, float *hit_distance)
 	c = mv_dot(dist, dist) - mv_dot(dist, cyl.dir) * \
 	mv_dot(dist, cyl.dir) - cyl.r * cyl.r;
 	d = solve_quadratic(a, b, c);
-	if (d > 0.001f && d < *hit_distance)
+	if (d > 0.0001f && d < *hit_distance)
 	{
 		*hit_distance = d;
 		return (d);
@@ -83,7 +83,7 @@ float	hit_cone(t_obj cone, t_ray ray, float *hit_distance)
 			* mv_dot(ray.dir, cone.dir) * mv_dot(dis, cone.dir));
 	abc.z = mv_dot(dis, dis) - r * powf(mv_dot(dis, cone.dir), 2);
 	d = solve_quadratic(abc.x, abc.y, abc.z);
-	if (d > 0.001f && d < *hit_distance)
+	if (d > 0.0001f && d < *hit_distance)
 	{
 		abc = mv_add_v(ray.orig, mv_mul_f(ray.dir, d));
 		if ((mv_dot(mv_sub_v(abc, cone.pos), cone.dir) > 0))
@@ -113,7 +113,7 @@ float	hit_plane(t_obj plane, t_ray ray, float *hit_distance)
 	if (fabs(denom) > 0.0001f)
 	{
 		d = mv_dot(mv_sub_v(plane.pos, ray.orig), plane.dir) / denom;
-		if (d > 0.001f && d < *hit_distance)
+		if (d > 0.0001f && d < *hit_distance)
 		{
 			*hit_distance = d;
 			return (d);
@@ -140,7 +140,7 @@ float	hit_sphere(t_obj sphere, t_ray ray, float *hit_distance)
 	b = 2.0f * mv_dot(oc, ray.dir);
 	c = mv_dot(oc, oc) - (sphere.r * sphere.r);
 	d = solve_quadratic(a, b, c);
-	if (d > 0.001f && d < *hit_distance)
+	if (d > 0.0001f && d < *hit_distance)
 	{
 		*hit_distance = d;
 		return (d);

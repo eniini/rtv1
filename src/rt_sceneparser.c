@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/14 15:48:00 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/25 00:22:06 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/25 13:39:45 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	init_l(t_rt *rt, char *line)
 	t_vector	pos;
 
 	ptr = (line + 2);
-	pos = mv_normalize(read_3dvec(ptr));
+	pos = read_3dvec(ptr);
 	init_light(&rt->light, pos, rt->colors[0]);
 }
 
@@ -44,7 +44,7 @@ static void	init_object(t_rt *rt, char *ptr, char c, int obj_n)
 		ptr = ft_strchr(ptr, ' ');
 	if (!ptr)
 		ft_getout("Invalid object init! (Incorrect delimiter character)");
-	dir = read_3dvec(ptr + 1);
+	dir = mv_normalize(read_3dvec(ptr + 1));
 	ptr = ft_strchr(ptr + 1, ' ');
 	if (!ptr)
 		ft_getout("Invalid object init! (Incorrect delimiter character)");

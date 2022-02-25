@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:28:13 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/21 00:52:09 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/25 00:56:48 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 # include <stdint.h>
 
-# define WIN_W	1920
-# define WIN_H	1080
+# define WIN_W	800
+# define WIN_H	600
 # define SPHERE		1
 # define CYLINDER	2
 # define CONE		3

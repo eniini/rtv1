@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 21:22:27 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/19 00:09:21 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/25 13:27:08 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	apply_3d_mods(t_obj *obj, t_vector r, t_vector t)
 	t_mat4	temp_2;
 
 	result = mm_init_unitmatrix();
-	if (t.x || t.y || t.z)
+	if (r.x || r.y || r.z)
 	{
 		temp_1 = mm_init_rotationmatrix_x(((int)r.x % 360) * DEG_TO_RAD);
 		temp_2 = mm_init_rotationmatrix_y(((int)r.y % 360) * DEG_TO_RAD);

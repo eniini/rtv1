@@ -6,7 +6,7 @@
 /*   By: eniini <eniini@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/14 14:38:49 by eniini            #+#    #+#             */
-/*   Updated: 2022/02/25 00:30:10 by eniini           ###   ########.fr       */
+/*   Updated: 2022/02/25 14:02:31 by eniini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,6 @@ static t_color	find_color(t_rt *rt, t_ray ray, int i)
 	ray.normal = find_intersection_normal(rt->object[i], ray);
 	if (mv_dot(ray.dir, ray.normal) > 0)
 		ray.normal = mv_mul_f(ray.normal, -1.0f);
-	//if (check_shadow(rt, ray, i))
-	//	return (rt->colors[1]);
 	dotproduct = mv_dot(ray.normal, mv_normalize(rt->light.pos));
 	if (dotproduct > 0)
 		return (col_multiply(rt->object[i].col, (dotproduct * 1.5f)));
